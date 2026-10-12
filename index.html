@@ -3,389 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ngôi Sao Ước Nguyện</title>
+    <title>Bầu Trời Ước Nguyện ✨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
+        body {
+            font-family: 'Quicksand', sans-serif;
             overflow: hidden;
-            background: #020208;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #fff;
+            background-color: #030712;
         }
-
-        #starfield {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        /* Central Star Container */
-        .central-star-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .central-star-container:hover {
-            transform: translate(-50%, -50%) scale(1.15);
-        }
-
-        /* 5-pointed Star with Glowing Trail & Supernova effect */
-        .giant-star {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #fff, #7df9ff, #ff7de1);
-            position: relative;
-            clip-path: polygon(
-                50% 0%, 
-                61% 35%, 
-                98% 35%, 
-                68% 57%, 
-                79% 91%, 
-                50% 70%, 
-                21% 91%, 
-                32% 57%, 
-                2% 35%, 
-                39% 35%
-            );
-            box-shadow: 0 0 50px rgba(125, 249, 255, 0.8), 0 0 100px rgba(255, 125, 225, 0.5);
-            animation: starPulse 3s infinite ease-in-out;
-            transition: all 0.5s ease;
-        }
-
-        /* Glowing Tail Effect behind the central star */
-        .giant-star::after {
-            content: '';
-            position: absolute;
-            bottom: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 6px;
-            height: 80px;
-            background: linear-gradient(to bottom, rgba(125,249,255,0.8), transparent);
-            filter: blur(4px);
-            animation: tailPulse 2s infinite ease-in-out;
-        }
-
-        @keyframes starPulse {
+        
+        /* Custom glow animations */
+        @keyframes pulseGlow {
             0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.8)) drop-shadow(0 0 40px rgba(59, 130, 246, 0.6));
                 transform: scale(1);
-                filter: drop-shadow(0 0 20px rgba(125,249,255,0.6));
             }
             50% {
+                filter: drop-shadow(0 0 35px rgba(168, 85, 247, 1)) drop-shadow(0 0 70px rgba(59, 130, 246, 0.9));
                 transform: scale(1.08);
-                filter: drop-shadow(0 0 45px rgba(255,125,225,0.9));
             }
         }
 
-        @keyframes tailPulse {
-            0%, 100% { height: 70px; opacity: 0.6; }
-            50% { height: 110px; opacity: 1; }
+        @keyframes floatStar {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
         }
 
-        .star-hint {
-            margin-top: 20px;
-            font-size: 15px;
-            letter-spacing: 2px;
-            color: #a5f3fc;
-            text-shadow: 0 0 12px rgba(125,249,255,0.8);
-            text-transform: uppercase;
-            animation: fadeInOut 2s infinite;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
-        }
-
-        /* Wish Modal / Form Overlay */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(2, 2, 8, 0.75);
-            backdrop-filter: blur(8px);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .wish-card {
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(125, 249, 255, 0.3);
-            border-radius: 24px;
-            padding: 35px 40px;
-            width: 90%;
-            max-width: 480px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(125, 249, 255, 0.15);
-            transform: scale(0.8) translateY(20px);
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-        }
-
-        .modal-overlay.active .wish-card {
-            transform: scale(1) translateY(0);
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 18px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: #94a3b8;
-            font-size: 24px;
+        .magical-star {
+            animation: pulseGlow 3s ease-in-out infinite, floatStar 5s ease-in-out infinite;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .close-btn:hover {
-            color: #fff;
+        .magical-star:hover {
+            transform: scale(1.15) rotate(5deg);
         }
 
-        .wish-card h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, #fff, #7df9ff, #ff7de1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 26px;
-            font-weight: 700;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #cbd5e1;
-            font-weight: 500;
-        }
-
-        /* Radio options styling */
-        .radio-group {
-            display: flex;
-            gap: 15px;
-        }
-
-        .radio-option {
-            flex: 1;
-            cursor: pointer;
-        }
-
-        .radio-option input {
-            display: none;
-        }
-
-        .radio-box {
-            display: block;
-            text-align: center;
-            padding: 10px;
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            transition: all 0.3s;
-            font-weight: 600;
-            color: #94a3b8;
-        }
-
-        .radio-option input:checked + .radio-box {
-            background: linear-gradient(135deg, rgba(125, 249, 255, 0.2), rgba(255, 125, 225, 0.2));
-            border-color: #7df9ff;
-            color: #fff;
-            box-shadow: 0 0 15px rgba(125, 249, 255, 0.3);
-        }
-
-        /* Select and Input styling */
-        select, textarea {
-            width: 100%;
-            padding: 12px 15px;
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            color: #fff;
-            font-size: 15px;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        select option {
-            background: #0f172a;
-            color: #fff;
-        }
-
-        select:focus, textarea:focus {
-            border-color: #7df9ff;
-            box-shadow: 0 0 12px rgba(125, 249, 255, 0.3);
-        }
-
-        textarea {
-            resize: none;
-            height: 90px;
-        }
-
-        /* Submit Button */
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
-            border: none;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
-            margin-top: 10px;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(236, 72, 153, 0.6);
-        }
-
-        .submit-btn:active {
-            transform: translateY(1px);
-        }
-
-        /* Supernova animation class during submit */
-        .supernova-anim {
-            animation: supernovaBurst 1.2s forwards !important;
-        }
-
+        /* Supernova intense brightening animation (in-place) */
         @keyframes supernovaBurst {
             0% {
+                filter: drop-shadow(0 0 20px rgba(254, 240, 138, 0.8)) drop-shadow(0 0 40px rgba(168, 85, 247, 0.6));
                 transform: scale(1);
-                filter: drop-shadow(0 0 20px rgba(125,249,255,0.6));
             }
-            40% {
-                transform: scale(3.5);
-                filter: drop-shadow(0 0 120px rgba(255,255,255,1)) drop-shadow(0 0 200px rgba(125,249,255,1));
-                opacity: 1;
+            30% {
+                filter: drop-shadow(0 0 90px rgba(255, 255, 255, 1)) drop-shadow(0 0 160px rgba(253, 224, 71, 1)) drop-shadow(0 0 240px rgba(236, 72, 153, 1));
+                transform: scale(1.45) rotate(15deg);
+            }
+            60% {
+                filter: drop-shadow(0 0 120px rgba(255, 255, 255, 1)) drop-shadow(0 0 200px rgba(250, 204, 21, 1));
+                transform: scale(1.3) rotate(30deg);
             }
             100% {
-                transform: scale(0);
-                filter: drop-shadow(0 0 300px rgba(255,125,225,1));
-                opacity: 0;
+                filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.8)) drop-shadow(0 0 50px rgba(59, 130, 246, 0.6));
+                transform: scale(1) rotate(0deg);
             }
+        }
+
+        .supernova-active {
+            animation: supernovaBurst 1.6s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        /* Modal transition */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Custom radio/option active states */
+        .option-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border-color: #c084fc;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+            color: white;
         }
     </style>
 </head>
-<body>
+<body class="relative w-screen h-screen flex items-center justify-center select-none">
 
-    <canvas id="starfield"></canvas>
+    <canvas id="skyCanvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none"></canvas>
 
-    <!-- Central Star Trigger -->
-    <div class="central-star-container" id="starTrigger">
-        <div class="giant-star" id="mainStarShape"></div>
-        <div class="star-hint">Chạm để ước nguyện</div>
-    </div>
+    <main class="relative z-10 flex flex-col items-center justify-center p-4">
+        <div id="instructionBox" class="text-center mb-8 transition-opacity duration-500">
+            <h1 class="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300 tracking-wider mb-2 drop-shadow-[0_2px_10px_rgba(255,255,255,0.3)]">
+                BẦU TRỜI ƯỚC NGUYỆN
+            </h1>
+            <p class="text-indigo-200/80 text-sm md:text-base animate-pulse">
+                Chạm vào ngôi sao linh thiêng ở giữa để gửi gắm điều ước ✨
+            </p>
+        </div>
 
-    <!-- Wish Modal / Form -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="wish-card">
-            <button class="close-btn" id="closeBtn">&times;</button>
-            <h2>Gửi Nguyện Ước Đêm Nay</h2>
-            <form id="wishForm">
+        <!-- Center Large 5-Pointed Star -->
+        <div id="centerStarContainer" class="relative flex items-center justify-center">
+            <!-- Outer Glow Aura -->
+            <div class="absolute w-48 h-48 md:w-64 md:h-64 rounded-full bg-purple-600/20 blur-3xl pointer-events-none"></div>
+            
+            <!-- SVG 5-Pointed Star with Tail Effect -->
+            <svg id="centerStar" class="magical-star w-36 h-36 md:w-48 md:h-48 text-amber-200" viewBox="0 0 24 24" fill="currentColor">
+                <defs>
+                    <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#fef08a" />
+                        <stop offset="50%" stop-color="#f43f5e" />
+                        <stop offset="100%" stop-color="#8b5cf6" />
+                    </linearGradient>
+                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
+                      fill="url(#starGradient)" filter="url(#glow)" />
+            </svg>
+        </div>
+    </main>
+
+    <div id="wishModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm modal-enter">
+        <div class="relative w-full max-w-md bg-slate-900/90 border border-purple-500/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(147,51,234,0.3)] text-white backdrop-blur-xl">
+            <!-- Close button -->
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors text-xl w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+                &times;
+            </button>
+
+            <h2 class="text-2xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-pink-300">
+                Gửi Ước Nguyện ✨
+            </h2>
+
+            <form id="wishForm" class="space-y-6">
                 <!-- Dòng 1: Bạn là -->
-                <div class="form-group">
-                    <label>1. Bạn là:</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="user" value="qduy" required>
-                            <span class="radio-box">qduy</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="user" value="nminh">
-                            <span class="radio-box">nminh</span>
-                        </label>
+                <div>
+                    <label class="block text-sm font-medium text-indigo-200 mb-2">1. Bạn là:</label>
+                    <div class="grid grid-cols-2 gap-3" id="senderGroup">
+                        <button type="button" data-value="qduy" class="option-btn py-2.5 px-4 rounded-xl border border-indigo-500/30 bg-slate-800/60 text-indigo-300 font-medium transition-all hover:bg-indigo-900/50">
+                            qduy
+                        </button>
+                        <button type="button" data-value="nminh" class="option-btn py-2.5 px-4 rounded-xl border border-indigo-500/30 bg-slate-800/60 text-indigo-300 font-medium transition-all hover:bg-indigo-900/50">
+                            nminh
+                        </button>
                     </div>
                 </div>
 
                 <!-- Dòng 2: Mệnh giá -->
-                <div class="form-group">
-                    <label for="amount">2. Mệnh giá:</label>
-                    <select id="amount" name="amount" required>
-                        <option value="" disabled selected>Chọn mức giá</option>
-                        <option value="0-50">0 - 50</option>
-                        <option value="50-100">50 - 100</option>
-                        <option value="100-200">100 - 200</option>
-                        <option value="200-300">200 - 300</option>
-                        <option value="400-500">400 - 500</option>
-                    </select>
+                <div>
+                    <label class="block text-sm font-medium text-indigo-200 mb-2">2. Mệnh giá:</label>
+                    <div class="grid grid-cols-3 gap-2" id="priceGroup">
+                        <button type="button" data-value="0-50" class="option-btn py-2 px-2 text-xs md:text-sm rounded-lg border border-indigo-500/30 bg-slate-800/60 text-indigo-300 font-medium transition-all hover:bg-indigo-900/50">
+                            0-50
+                        </button>
+                        <button type="button" data-value="50-100" class="option-btn py-2 px-2 text-xs md:text-sm rounded-lg border border-indigo-500/30 bg-slate-800/60 text-indigo-300 font-medium transition-all hover:bg-indigo-900/50">
+                            50-100
+                        </button>
+                        <button type="button" data-value="100-200" class="option-btn py-2 px-2 text-xs md:text-sm rounded-lg border border-indigo-500/30 bg-slate-800/60 text-indigo-300 font-medium transition-all hover:bg-indigo-900/50">
+                            100-200
+                        </button>
+                        <button type="button" data-value="200-300" class="option-btn py-2 px-2 text-xs md:text-sm rounded-lg border border-indigo-500/30 bg-slate-800/60 text-indigo-300 font-medium transition-all hover:bg-indigo-900/50">
+                            200-300
+                        </button>
+                        <button type="button" data-value="400-500" class="option-btn py-2 px-2 text-xs md:text-sm rounded-lg border border-indigo-500/30 bg-slate-800/60 text-indigo-300 font-medium transition-all hover:bg-indigo-900/50 col-span-2">
+                            400-500
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Dòng 3: Tên ước nguyện -->
-                <div class="form-group">
-                    <label for="wishText">3. Tên ước nguyện:</label>
-                    <textarea id="wishText" name="wishText" placeholder="Nhập điều ước của bạn vào đây..." required></textarea>
+                <div>
+                    <label for="wishInput" class="block text-sm font-medium text-indigo-200 mb-2">3. Tên ước nguyện:</label>
+                    <input type="text" id="wishInput" placeholder="Nhập điều ước của bạn..." 
+                           class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-indigo-500/30 text-white placeholder-indigo-400/50 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 transition-all">
                 </div>
 
-                <button type="submit" class="submit-btn" id="submitBtn">Gửi Ước Nguyện</button>
+                <!-- Nút Gửi -->
+                <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.8)] hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    Gửi Ước Nguyện ✨
+                </button>
             </form>
         </div>
     </div>
 
-    <script>
-        // ================= CONFIG GOOGLE SHEETS WEB APP URLS =================
-        // Thay thế 2 link dưới đây bằng Web App URL sau khi bạn Deploy Google Apps Script
-        const GOOGLE_SHEETS_URLS = {
-            'qduy': 'https://script.google.com/macros/s/AKfycbxpfkTg6weWGDyUVh8eD5wjDvxjT68YVVO5t03IXQwuBEzE-giiy6NEqKzAWpmJ5i_i/exec',
-            'nminh': 'https://script.google.com/macros/s/AKfycbzo4TY7t24GDgcJc0MVg3P3URECJR3oMhBshcJ3WRvb-hwgZGBPEW8MdSrBzo6lRL71RA/exec'
-        };
+    <div id="toastNotification" class="fixed top-8 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-500 transform -translate-y-4">
+        <div class="bg-gradient-to-r from-purple-900/90 to-indigo-900/90 border border-purple-400 text-white px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(168,85,247,0.6)] backdrop-blur-md flex items-center space-x-3">
+            <span class="text-xl">🌟</span>
+            <span id="toastText" class="font-medium text-sm md:text-base">✨ Ước nguyện đã được gửi gắm vào vũ trụ! ✨</span>
+        </div>
+    </div>
 
-        // Starfield Background Canvas
-        const canvas = document.getElementById('starfield');
+    <script>
+        // Canvas Starry Sky Background Setup
+        const canvas = document.getElementById('skyCanvas');
         const ctx = canvas.getContext('2d');
 
         let width, height;
         let stars = [];
-        let particles = [];
+        let shootingStars = [];
+        let burstParticles = [];
 
-        function initCanvas() {
+        function resizeCanvas() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
         }
 
-        window.addEventListener('resize', initCanvas);
-        initCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
+        // Initialize background stars
         class Star {
             constructor() {
+                this.reset();
+            }
+            reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
                 this.size = Math.random() * 2;
@@ -394,152 +229,246 @@
                 this.twinkleSpeed = Math.random() * 0.02 + 0.005;
                 this.twinkleDir = Math.random() > 0.5 ? 1 : -1;
             }
-
-            draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
             update() {
                 this.alpha += this.twinkleSpeed * this.twinkleDir;
                 if (this.alpha > 1 || this.alpha < 0.2) {
                     this.twinkleDir *= -1;
                 }
             }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
 
-        // Particle Effect for Supernova
-        class Particle {
+        // Ambient shooting stars across the background
+        class AmbientShootingStar {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = 0;
+                this.len = Math.random() * 80 + 40;
+                this.speed = Math.random() * 8 + 4;
+                this.angle = Math.PI / 4 + (Math.random() * 0.2 - 0.1);
+                this.opacity = Math.random() * 0.7 + 0.3;
+                this.active = false;
+            }
+            update() {
+                if (!this.active) {
+                    if (Math.random() < 0.01) {
+                        this.active = true;
+                        this.x = Math.random() * width;
+                        this.y = 0;
+                    }
+                    return;
+                }
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+
+                if (this.x > width || this.y > height) {
+                    this.active = false;
+                }
+            }
+            draw() {
+                if (!this.active) return;
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - Math.cos(this.angle) * this.len, this.y - Math.sin(this.angle) * this.len);
+                ctx.stroke();
+            }
+        }
+
+        // Burst particles when submitting
+        class BurstParticle {
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 8 + 2;
+                const speed = Math.random() * 6 + 2;
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
-                this.size = Math.random() * 4 + 1;
                 this.alpha = 1;
-                this.color = Math.random() > 0.5 ? '#7df9ff' : '#ff7de1';
+                this.decay = Math.random() * 0.02 + 0.015;
+                this.size = Math.random() * 3 + 1;
+                this.color = ['#fef08a', '#f43f5e', '#a855f7', '#38bdf8', '#ffffff'][Math.floor(Math.random() * 5)];
             }
-
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+            }
             draw() {
+                if (this.alpha <= 0) return;
                 ctx.save();
                 ctx.globalAlpha = this.alpha;
                 ctx.fillStyle = this.color;
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = this.color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             }
-
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.alpha -= 0.02;
-            }
         }
 
-        for (let i = 0; i < 250; i++) {
+        // Populate stars
+        for (let i = 0; i < 200; i++) {
             stars.push(new Star());
         }
+        for (let i = 0; i < 3; i++) {
+            shootingStars.push(new AmbientShootingStar());
+        }
 
-        function animate() {
+        // Render loop
+        function animateSky() {
             ctx.clearRect(0, 0, width, height);
             
+            // Draw gradient background
+            const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+            bgGradient.addColorStop(0, '#030712');
+            bgGradient.addColorStop(0.5, '#0f172a');
+            bgGradient.addColorStop(1, '#020617');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, width, height);
+
+            // Update & draw background stars
             stars.forEach(star => {
                 star.update();
                 star.draw();
             });
 
-            particles.forEach((p, index) => {
+            // Update & draw ambient shooting stars
+            shootingStars.forEach(sStar => {
+                sStar.update();
+                sStar.draw();
+            });
+
+            // Update & draw burst particles
+            for (let i = burstParticles.length - 1; i >= 0; i--) {
+                let p = burstParticles[i];
                 p.update();
                 p.draw();
                 if (p.alpha <= 0) {
-                    particles.splice(index, 1);
+                    burstParticles.splice(i, 1);
                 }
-            });
+            }
 
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animateSky);
+        }
+        animateSky();
+
+        const centerStar = document.getElementById('centerStar');
+        const centerStarContainer = document.getElementById('centerStarContainer');
+        const wishModal = document.getElementById('wishModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const wishForm = document.getElementById('wishForm');
+        const instructionBox = document.getElementById('instructionBox');
+        const toastNotification = document.getElementById('toastNotification');
+        const toastText = document.getElementById('toastText');
+
+        // Form state variables
+        let selectedSender = '';
+        let selectedPrice = '';
+
+        // Open Modal when clicking center star
+        centerStar.addEventListener('click', () => {
+            wishModal.classList.remove('modal-enter');
+            wishModal.classList.add('modal-active');
+            instructionBox.style.opacity = '0.4';
+        });
+
+        // Close Modal
+        function closeModal() {
+            wishModal.classList.remove('modal-active');
+            wishModal.classList.add('modal-enter');
+            instructionBox.style.opacity = '1';
         }
 
-        animate();
-
-        // Modal Interactions
-        const starTrigger = document.getElementById('starTrigger');
-        const modalOverlay = document.getElementById('modalOverlay');
-        const closeBtn = document.getElementById('closeBtn');
-        const mainStarShape = document.getElementById('mainStarShape');
-        const wishForm = document.getElementById('wishForm');
-
-        starTrigger.addEventListener('click', () => {
-            modalOverlay.classList.add('active');
+        closeModalBtn.addEventListener('click', closeModal);
+        wishModal.addEventListener('click', (e) => {
+            if (e.target === wishModal) closeModal();
         });
 
-        closeBtn.addEventListener('click', () => {
-            modalOverlay.classList.remove('active');
+        // Handle Sender selection buttons
+        const senderButtons = document.querySelectorAll('#senderGroup button');
+        senderButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                senderButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedSender = btn.getAttribute('data-value');
+            });
         });
 
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                modalOverlay.classList.remove('active');
-            }
+        // Handle Price selection buttons
+        const priceButtons = document.querySelectorAll('#priceGroup button');
+        priceButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                priceButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedPrice = btn.getAttribute('data-value');
+            });
         });
 
-        // Form Submit Handler
-        wishForm.addEventListener('submit', async (e) => {
+        // Show Custom Toast notification
+        function showToast(message) {
+            toastText.textContent = message;
+            toastNotification.classList.remove('opacity-0', '-translate-y-4');
+            toastNotification.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toastNotification.classList.remove('opacity-100', 'translate-y-0');
+                toastNotification.classList.add('opacity-0', '-translate-y-4');
+            }, 4000);
+        }
+
+        // Handle Form Submission with In-Place Supernova Effect
+        wishForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            const wishText = document.getElementById('wishInput').value.trim();
 
-            const selectedUser = document.querySelector('input[name="user"]:checked').value;
-            const amount = document.getElementById('amount').value;
-            const wishText = document.getElementById('wishText').value;
+            if (!selectedSender) {
+                showToast('⚠️ Vui lòng chọn bạn là ai (qduy hoặc nminh)!');
+                return;
+            }
+            if (!selectedPrice) {
+                showToast('⚠️ Vui lòng chọn mức mệnh giá ước nguyện!');
+                return;
+            }
+            if (!wishText) {
+                showToast('⚠️ Vui lòng nhập tên/nội dung ước nguyện!');
+                return;
+            }
 
-            const targetUrl = GOOGLE_SHEETS_URLS[selectedUser];
+            // Close modal form smoothly
+            closeModal();
 
-            // Close modal smoothly
-            modalOverlay.classList.remove('active');
+            // Trigger intense in-place brightening supernova animation
+            centerStar.classList.add('supernova-active');
 
-            // Trigger Supernova Brightening & Particle Burst on the Central Star
-            const rect = starTrigger.getBoundingClientRect();
+            // Spawn particle burst at center of screen
+            const rect = centerStar.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
 
-            mainStarShape.classList.add('supernova-anim');
-
-            for (let i = 0; i < 100; i++) {
-                particles.push(new Particle(centerX, centerY));
+            for (let i = 0; i < 70; i++) {
+                burstParticles.push(new BurstParticle(centerX, centerY));
             }
 
-            // Send Data to Google Sheets via Fetch POST
-            if (targetUrl && targetUrl !== 'YOUR_QDUY_SCRIPT_URL_HERE' && targetUrl !== 'YOUR_NMINH_SCRIPT_URL_HERE') {
-                try {
-                    await fetch(targetUrl, {
-                        method: 'POST',
-                        mode: 'no-cors', // Google Apps Script requires no-cors mode for simple submissions
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            user: selectedUser,
-                            amount: amount,
-                            wish: wishText
-                        })
-                    });
-                } catch (err) {
-                    console.error('Lỗi khi gửi lên Google Sheet:', err);
-                }
-            } else {
-                console.warn('Vui lòng cập nhật đúng link Google Apps Script Web App URL cho qduy và nminh!');
-            }
+            showToast(`✨ Ước nguyện của [${selectedSender}] (${selectedPrice}) đã bừng sáng và được gửi gắm vào vũ trụ!`);
 
-            // Reset animation after completion
+            // Reset after animation finishes
             setTimeout(() => {
-                mainStarShape.classList.remove('supernova-anim');
+                centerStar.classList.remove('supernova-active');
+                // Reset form state
                 wishForm.reset();
-            }, 1200);
+                selectedSender = '';
+                selectedPrice = '';
+                senderButtons.forEach(b => b.classList.remove('active'));
+                priceButtons.forEach(b => b.classList.remove('active'));
+            }, 1600);
         });
     </script>
 </body>
