@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ngôi Sao Ước Nguyện</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #020208;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+        }
+
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Central Star Container */
+        .central-star-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .central-star-container:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+
+        /* 5-pointed Star with Glowing Trail & Supernova effect */
+        .giant-star {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #fff, #7df9ff, #ff7de1);
+            position: relative;
+            clip-path: polygon(
+                50% 0%, 
+                61% 35%, 
+                98% 35%, 
+                68% 57%, 
+                79% 91%, 
+                50% 70%, 
+                21% 91%, 
+                32% 57%, 
+                2% 35%, 
+                39% 35%
+            );
+            box-shadow: 0 0 50px rgba(125, 249, 255, 0.8), 0 0 100px rgba(255, 125, 225, 0.5);
+            animation: starPulse 3s infinite ease-in-out;
+            transition: all 0.5s ease;
+        }
+
+        /* Glowing Tail Effect behind the central star */
+        .giant-star::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(125,249,255,0.8), transparent);
+            filter: blur(4px);
+            animation: tailPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes starPulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 20px rgba(125,249,255,0.6));
+            }
+            50% {
+                transform: scale(1.08);
+                filter: drop-shadow(0 0 45px rgba(255,125,225,0.9));
+            }
+        }
+
+        @keyframes tailPulse {
+            0%, 100% { height: 70px; opacity: 0.6; }
+            50% { height: 110px; opacity: 1; }
+        }
+
+        .star-hint {
+            margin-top: 20px;
+            font-size: 15px;
+            letter-spacing: 2px;
+            color: #a5f3fc;
+            text-shadow: 0 0 12px rgba(125,249,255,0.8);
+            text-transform: uppercase;
+            animation: fadeInOut 2s infinite;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* Wish Modal / Form Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 2, 8, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .wish-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(125, 249, 255, 0.3);
+            border-radius: 24px;
+            padding: 35px 40px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(125, 249, 255, 0.15);
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .modal-overlay.active .wish-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        .wish-card h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #fff, #7df9ff, #ff7de1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        /* Radio options styling */
+        .radio-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .radio-option {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .radio-option input {
+            display: none;
+        }
+
+        .radio-box {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .radio-option input:checked + .radio-box {
+            background: linear-gradient(135deg, rgba(125, 249, 255, 0.2), rgba(255, 125, 225, 0.2));
+            border-color: #7df9ff;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(125, 249, 255, 0.3);
+        }
+
+        /* Select and Input styling */
+        select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        select option {
+            background: #0f172a;
+            color: #fff;
+        }
+
+        select:focus, textarea:focus {
+            border-color: #7df9ff;
+            box-shadow: 0 0 12px rgba(125, 249, 255, 0.3);
+        }
+
+        textarea {
+            resize: none;
+            height: 90px;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(236, 72, 153, 0.6);
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Supernova animation class during submit */
+        .supernova-anim {
+            animation: supernovaBurst 1.2s forwards !important;
+        }
+
+        @keyframes supernovaBurst {
+            0% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 20px rgba(125,249,255,0.6));
+            }
+            40% {
+                transform: scale(3.5);
+                filter: drop-shadow(0 0 120px rgba(255,255,255,1)) drop-shadow(0 0 200px rgba(125,249,255,1));
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0);
+                filter: drop-shadow(0 0 300px rgba(255,125,225,1));
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+
+    <!-- Central Star Trigger -->
+    <div class="central-star-container" id="starTrigger">
+        <div class="giant-star" id="mainStarShape"></div>
+        <div class="star-hint">Chạm để ước nguyện</div>
+    </div>
+
+    <!-- Wish Modal / Form -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="wish-card">
+            <button class="close-btn" id="closeBtn">&times;</button>
+            <h2>Gửi Nguyện Ước Đêm Nay</h2>
+            <form id="wishForm">
+                <!-- Dòng 1: Bạn là -->
+                <div class="form-group">
+                    <label>1. Bạn là:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="user" value="qduy" required>
+                            <span class="radio-box">qduy</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="user" value="nminh">
+                            <span class="radio-box">nminh</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Dòng 2: Mệnh giá -->
+                <div class="form-group">
+                    <label for="amount">2. Mệnh giá:</label>
+                    <select id="amount" name="amount" required>
+                        <option value="" disabled selected>Chọn mức giá</option>
+                        <option value="0-50">0 - 50</option>
+                        <option value="50-100">50 - 100</option>
+                        <option value="100-200">100 - 200</option>
+                        <option value="200-300">200 - 300</option>
+                        <option value="400-500">400 - 500</option>
+                    </select>
+                </div>
+
+                <!-- Dòng 3: Tên ước nguyện -->
+                <div class="form-group">
+                    <label for="wishText">3. Tên ước nguyện:</label>
+                    <textarea id="wishText" name="wishText" placeholder="Nhập điều ước của bạn vào đây..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Gửi Ước Nguyện</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ================= CONFIG GOOGLE SHEETS WEB APP URLS =================
+        // Thay thế 2 link dưới đây bằng Web App URL sau khi bạn Deploy Google Apps Script
+        const GOOGLE_SHEETS_URLS = {
+            'qduy': 'https://script.google.com/macros/s/AKfycbxpfkTg6weWGDyUVh8eD5wjDvxjT68YVVO5t03IXQwuBEzE-giiy6NEqKzAWpmJ5i_i/exec',
+            'nminh': 'https://script.google.com/macros/s/AKfycbzo4TY7t24GDgcJc0MVg3P3URECJR3oMhBshcJ3WRvb-hwgZGBPEW8MdSrBzo6lRL71RA/exec'
+        };
+
+        // Starfield Background Canvas
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let stars = [];
+        let particles = [];
+
+        function initCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+
+        class Star {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2;
+                this.baseAlpha = Math.random() * 0.7 + 0.3;
+                this.alpha = this.baseAlpha;
+                this.twinkleSpeed = Math.random() * 0.02 + 0.005;
+                this.twinkleDir = Math.random() > 0.5 ? 1 : -1;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            update() {
+                this.alpha += this.twinkleSpeed * this.twinkleDir;
+                if (this.alpha > 1 || this.alpha < 0.2) {
+                    this.twinkleDir *= -1;
+                }
+            }
+        }
+
+        // Particle Effect for Supernova
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 8 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.size = Math.random() * 4 + 1;
+                this.alpha = 1;
+                this.color = Math.random() > 0.5 ? '#7df9ff' : '#ff7de1';
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.02;
+            }
+        }
+
+        for (let i = 0; i < 250; i++) {
+            stars.push(new Star());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                if (p.alpha <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Modal Interactions
+        const starTrigger = document.getElementById('starTrigger');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const closeBtn = document.getElementById('closeBtn');
+        const mainStarShape = document.getElementById('mainStarShape');
+        const wishForm = document.getElementById('wishForm');
+
+        starTrigger.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove('active');
+            }
+        });
+
+        // Form Submit Handler
+        wishForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const selectedUser = document.querySelector('input[name="user"]:checked').value;
+            const amount = document.getElementById('amount').value;
+            const wishText = document.getElementById('wishText').value;
+
+            const targetUrl = GOOGLE_SHEETS_URLS[selectedUser];
+
+            // Close modal smoothly
+            modalOverlay.classList.remove('active');
+
+            // Trigger Supernova Brightening & Particle Burst on the Central Star
+            const rect = starTrigger.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            mainStarShape.classList.add('supernova-anim');
+
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle(centerX, centerY));
+            }
+
+            // Send Data to Google Sheets via Fetch POST
+            if (targetUrl && targetUrl !== 'YOUR_QDUY_SCRIPT_URL_HERE' && targetUrl !== 'YOUR_NMINH_SCRIPT_URL_HERE') {
+                try {
+                    await fetch(targetUrl, {
+                        method: 'POST',
+                        mode: 'no-cors', // Google Apps Script requires no-cors mode for simple submissions
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user: selectedUser,
+                            amount: amount,
+                            wish: wishText
+                        })
+                    });
+                } catch (err) {
+                    console.error('Lỗi khi gửi lên Google Sheet:', err);
+                }
+            } else {
+                console.warn('Vui lòng cập nhật đúng link Google Apps Script Web App URL cho qduy và nminh!');
+            }
+
+            // Reset animation after completion
+            setTimeout(() => {
+                mainStarShape.classList.remove('supernova-anim');
+                wishForm.reset();
+            }, 1200);
+        });
+    </script>
+</body>
+</html>
